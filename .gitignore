@@ -1,0 +1,11 @@
+.git
+.vscode
+.serverless
+.webpack
+.idea
+coverage
+node_modules
+*.tgz
+.env
+test/
+lib/*.js

@@ -1,0 +1,32 @@
+{
+    "name": "cloudflare-file-hosting",
+    "version": "0.0.1",
+    "description": "Use Cloudflare as a file host with Workers and Workers KV",
+    "main": "./lib/cli.js",
+    "bin": {
+        "cfupload": "./lib/cli.js"
+    },
+    "scripts": {
+        "test": "tsc && node ./lib/cli.js --path lib"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/judge2020/cloudflare-file-hosting"
+    },
+    "keywords": [
+        "cloudflare",
+        "serverless",
+        "workers"
+    ],
+    "author": "judge2020",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^12.0.4",
+        "typescript": "^3.5.1"
+    },
+    "dependencies": {
+        "btoa": "^1.2.1",
+        "commander": "^2.20.0",
+        "walkdir": "^0.4.0"
+    }
+}
