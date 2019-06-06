@@ -1,4 +1,13 @@
 // non-exhaustive. Add more to your own deployment if you use other extensions.
+const textExtensions = [
+    "js",
+    "css",
+    "html",
+    "json",
+    "htm",
+    "sh",
+    "xml",
+];
 const extensionToContentType = {
     'css': 'text/css',
     'html': 'text/html',
@@ -52,8 +61,8 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event))
 });
 
-async function handleRequest (event) {
-    let reqpath = new URL(event.request.url).pathname.replace('%20', ' ')
+async function handleRequest(event) {
+    let reqpath = new URL(event.request.url).pathname.replace('%20', ' ');
     if (reqpath === '/') {
         // feel free to change if index.html isn't your index
         reqpath = '/index.html'
@@ -61,14 +70,32 @@ async function handleRequest (event) {
     // remove leading slash
     reqpath = reqpath.substr(1);
 
-    // obtain value of key
+    let filenamesplit = reqpath.split('.');
+    let fileExtension = filenamesplit[filenamesplit.length - 1];
+    let contenttype = extensionToContentType[fileExtension] || "text/plain";
+
+
     // @ts-ignore
-    let value = await STATIC_KV.get(reqpath);
+    let value;
+    if (textExtensions.includes(fileExtension)) {
+        // @ts-ignore
+        value = await STATIC_KV.get(reqpath);
+    } else {
+        // @ts-ignore
+        value = await STATIC_KV.get(reqpath, "arrayBuffer");
+        return new Response(value, {
+            headers: {
+                'content-type': contenttype,
+            },
+        })
+    }
 
     // if this isn't in the namespace, 404
     if (value === null) {
-        return new Response('file not found', { status: 404 })
+        return new Response('file not found', {status: 404})
     }
+
+    // TODO: split file support for non-text files
     // stitch the files we split during deploy
     if (value.startsWith('SPLIT_')) {
         // file splitting logic
@@ -83,11 +110,8 @@ async function handleRequest (event) {
         value = splitKeys.join('')
     }
 
-    let filenamesplit = reqpath.split('.');
-    let fileExtension = filenamesplit[filenamesplit.length - 1];
-    let contenttype = extensionToContentType[fileExtension] || "text/plain";
 
-    return new Response(atob(value), {
+    return new Response(value, {
         headers: {
             'content-type': contenttype,
         },

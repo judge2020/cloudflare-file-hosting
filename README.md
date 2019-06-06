@@ -8,4 +8,5 @@ You should know that **Cloudflare Workers always runs in front the CF Cache**. T
 
 ### Limitations
 
-Currently only works with text-based files (html, js, css, etc).
+Currently file sizes are limited to the maximum size Cloudflare permits, 2MB. File splitting is a planned feature.
+

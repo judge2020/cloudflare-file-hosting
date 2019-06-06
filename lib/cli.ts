@@ -3,8 +3,6 @@ import {promises as fs} from "fs";
 import * as helpers from "./helpers";
 import walk from "walkdir";
 
-const {cfApiCall} = require("cloudflare-workers-toolkit/src/api");
-
 const {CLOUDFLARE_AUTH_KEY, CLOUDFLARE_AUTH_EMAIL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_KV_NAMESPACE_ID} = process.env;
 
 // begin CLI
@@ -17,7 +15,7 @@ program.parse(process.argv);
 
 // ensure Cloudflare environment variables are passed
 
-if (!(CLOUDFLARE_AUTH_EMAIL && CLOUDFLARE_AUTH_KEY))  {
+if (!(CLOUDFLARE_AUTH_EMAIL && CLOUDFLARE_AUTH_KEY)) {
     console.log('The Environment variables CLOUDFLARE_AUTH_EMAIL and CLOUDFLARE_AUTH_KEY need to be set.');
     process.exit(1)
 }
@@ -30,7 +28,7 @@ if (!path) {
 }
 
 // test if the path is a directory
-if (!helpers.isDirectory(path)){
+if (!helpers.isDirectory(path)) {
     console.log(`Path passed \"${path}\" is not a directory.`);
     process.exit(1)
 }
@@ -38,35 +36,35 @@ if (!helpers.isDirectory(path)){
 
 async function uploadFile(key, value) {
     console.log(`Uploading ${key}...`);
-    let cfresult = await cfApiCall({
-        url: `/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_KV_NAMESPACE_ID}/values/${key}`,
+    let cfresult = await helpers.cfApiCall({
+        url: `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_KV_NAMESPACE_ID}/values/${key}`,
         method: 'PUT',
         body: value,
         contentType: "application/json"
     });
-    console.log(cfresult);
+    console.log(cfresult.data);
     return cfresult;
 }
 
 walk(path, {}, async (_filePath, stat) => {
-    if (stat.isDirectory()){
+    if (stat.isDirectory()) {
         return;
     }
     let filePath = helpers.relativePath(_filePath);
     let uriPath = helpers.fileToUri(filePath, path);
 
-    let b64Contents = await fs.readFile(filePath, {encoding: "base64"});
+    let b64Contents = await fs.readFile(filePath, {encoding: null});
 
     if (b64Contents.length < 2097152) {
         await uploadFile(uriPath, b64Contents);
         return;
     }
     // file splitting logic
-    let b64parts = helpers.splitNChars(b64Contents, 2097152);
+    let b64parts = helpers.splitBuffer(b64Contents, 2097152);
 
-    uploadFile(uriPath, `SPLIT_${b64parts.length}`);
+    await uploadFile(uriPath, `SPLIT_${b64parts.length}`);
 
-    b64parts.forEach((value, index) => {
-        uploadFile(`${uriPath}_${index}`, value)
+    b64parts.forEach(async (value, index) => {
+        await uploadFile(`${uriPath}_${index}`, value)
     });
 });

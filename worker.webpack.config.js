@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
+    devtool: 'hidden-source-map', // eval() doesn't work in CF's workers
     entry: './worker/workerCode.ts',
-    //mode: 'development',
-    mode: 'production',
+    mode: process.env.NODE_ENV || 'development',
     module: {
         rules: [
             {
