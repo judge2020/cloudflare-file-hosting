@@ -9,3 +9,6 @@ node_modules
 .env
 test/
 lib/*.js
+dist/
+worker/*.js
+

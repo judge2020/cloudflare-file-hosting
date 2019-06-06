@@ -48,8 +48,9 @@ const extensionToContentType = {
 };
 
 addEventListener('fetch', event => {
+    // @ts-ignore
     event.respondWith(handleRequest(event))
-})
+});
 
 async function handleRequest (event) {
     let reqpath = new URL(event.request.url).pathname.replace('%20', ' ')
@@ -58,10 +59,11 @@ async function handleRequest (event) {
         reqpath = '/index.html'
     }
     // remove leading slash
-    reqpath = reqpath.substr(1)
+    reqpath = reqpath.substr(1);
 
     // obtain value of key
-    let value = await STATIC_KV.get(reqpath)
+    // @ts-ignore
+    let value = await STATIC_KV.get(reqpath);
 
     // if this isn't in the namespace, 404
     if (value === null) {
@@ -73,16 +75,17 @@ async function handleRequest (event) {
         let numberOfKeys = value.split('_')[1];
         let splitKeys = [];
         for (let i = 0; i < numberOfKeys; i++) {
-            let _splitvalue = await STATIC_KV.get(`${reqpath}_${i}`)
+            // @ts-ignore
+            let _splitvalue = await STATIC_KV.get(`${reqpath}_${i}`);
+            // @ts-ignore
             splitKeys.push(_splitvalue)
         }
         value = splitKeys.join('')
     }
 
-    let filenamesplit = reqpath.split('.')
-    let fileExtension = filenamesplit[filenamesplit.length - 1]
+    let filenamesplit = reqpath.split('.');
+    let fileExtension = filenamesplit[filenamesplit.length - 1];
     let contenttype = extensionToContentType[fileExtension] || "text/plain";
-
 
     return new Response(atob(value), {
         headers: {
