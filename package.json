@@ -1,6 +1,6 @@
 {
     "name": "cloudflare-file-hosting",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Use Cloudflare as a file host with Workers and Workers KV",
     "main": "./lib/cli.js",
     "bin": {
