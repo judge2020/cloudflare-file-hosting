@@ -16,7 +16,7 @@ workflow "push" {
 
 workflow "release" {
   on = "release"
-  resolves = ["build"]
+  resolves = ["publish"]
 }
 action "publish" {
   args = "publish --access public"
