@@ -1,14 +1,15 @@
 {
     "name": "cloudflare-file-hosting",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Use Cloudflare as a file host with Workers and Workers KV",
     "main": "./lib/cli.js",
     "bin": {
-        "cfupload": "./lib/cli.js"
+        "cfupload": "./dist/cli.js"
     },
     "scripts": {
         "test": "npm run buildcli && node ./dist/cli.js --path test",
         "buildcli": "webpack --config cli.webpack.config.js",
+        "dist": "cross-env NODE_ENV=production npm run buildworker && cross-env NODE_ENV=production npm run buildcli",
         "buildworker": "webpack --config worker.webpack.config.js",
         "watchworker": "webpack --config worker.webpack.config.js --watch"
     },
@@ -27,6 +28,7 @@
         "@types/node": "^12.0.4",
         "@udacity/types-service-worker-mock": "^1.0.0",
         "cloudflare-worker-mock": "^1.0.0",
+        "cross-env": "^5.2.0",
         "ts-loader": "^6.0.2",
         "types-cloudflare-worker": "^1.0.0",
         "typescript": "^3.5.1",
