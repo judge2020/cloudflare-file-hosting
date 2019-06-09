@@ -18,9 +18,17 @@ workflow "release" {
   on = "release"
   resolves = ["publish"]
 }
+
+action "release-filter published" {
+  needs = ["build"]
+  uses = "actions/bin/filter@master"
+  args = "action published"
+}
+
+
 action "publish" {
   args = "publish --access public"
-  needs = ["build"]
+  needs = ["release-filter published"]
   uses = "actions/npm@master"
   secrets = ["NPM_AUTH_TOKEN"]
 }
