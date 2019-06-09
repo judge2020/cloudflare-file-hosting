@@ -64,7 +64,9 @@ walk(path, {}, async (_filePath, stat) => {
     await uploadFile(uriPath, `SPLIT_${b64parts.length}`);
 
     b64parts.forEach(async (value: Buffer, index) => {
-        console.log(`Uploading ${uriPath} part ${index}...`);
-        await uploadFile(`${uriPath}_${index}`, value)
+        let _logName = `${uriPath} part ${index}`;
+        console.log(`Uploading ${_logName}...`);
+        let result = await uploadFile(`${uriPath}_${index}`, value);
+        console.log(_logName, result.data.success ? 'success' : result.data)
     });
 });
