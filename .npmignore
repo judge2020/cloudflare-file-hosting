@@ -14,3 +14,6 @@ jest-config.json
 __tests__/
 example/
 coverage/
+.env
+test/
+node_modules/

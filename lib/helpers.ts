@@ -32,10 +32,14 @@ export function splitNChars(txt, num) {
 }
 
 export function splitBuffer(buf: Buffer, num) {
-    var result = [];
-    for (var i = 0; i < buf.length; i += num) {
-        // @ts-ignore
-        result.push(buf.slice(i, num));
+    var result: Buffer[] = [];
+    for (let i = 0; i < buf.length; i += num) {
+        if (i + num > buf.length) {
+            result.push(buf.slice(i, buf.length));
+        }
+        else {
+            result.push(buf.slice(i, num));
+        }
     }
     return result;
 }

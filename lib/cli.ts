@@ -34,16 +34,13 @@ if (!helpers.isDirectory(path)) {
 }
 
 
-async function uploadFile(key, value) {
-    console.log(`Uploading ${key}...`);
-    let cfresult = await helpers.cfApiCall({
+export async function uploadFile(key, value) {
+    return await helpers.cfApiCall({
         url: `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${CLOUDFLARE_KV_NAMESPACE_ID}/values/${key}`,
         method: 'PUT',
         body: value,
         contentType: "application/json"
     });
-    console.log(cfresult.data);
-    return cfresult;
 }
 
 walk(path, {}, async (_filePath, stat) => {
@@ -54,17 +51,20 @@ walk(path, {}, async (_filePath, stat) => {
     let uriPath = helpers.fileToUri(filePath, path);
 
     let b64Contents = await fs.readFile(filePath, {encoding: null});
-
+    // handle small files
     if (b64Contents.length < 2097152) {
+        console.log(`Uploading ${uriPath}...`);
         await uploadFile(uriPath, b64Contents);
         return;
     }
-    // file splitting logic
+
+    // file splitting logic for >2mb files
     let b64parts = helpers.splitBuffer(b64Contents, 2097152);
 
     await uploadFile(uriPath, `SPLIT_${b64parts.length}`);
 
-    b64parts.forEach(async (value, index) => {
+    b64parts.forEach(async (value: Buffer, index) => {
+        console.log(`Uploading ${uriPath} part ${index}...`);
         await uploadFile(`${uriPath}_${index}`, value)
     });
 });
