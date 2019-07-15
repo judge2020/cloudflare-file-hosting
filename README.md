@@ -10,6 +10,10 @@ If you use files >2mb then this script will split the file into multiple 2mb par
 
 ### Limitations
 
-Your uploading may get rate limited by Cloudflare if you have a lot of data to upload and/or are frequently uploading files. The Cloudflare API request limit is 5000/hour. Each file upload is 1 request and big files that are being split will incur multiple requests.
+#### Upload limits
 
-Cloudflare imposes a 128mb [memory limit](https://workers.cloudflare.com/docs/reference/runtime/limits/#memory), and since split files are re-constructed in memory, your file will need to be smaller than ~127mb (the worker itself allocates memory as well).
+Your uploading may get rate limited by Cloudflare if you have a lot of data to upload and/or are frequently uploading files. 
+
+The Cloudflare API request limit is 5000/hour. Each file upload is 1 request and big files that are being split will incur a request per every ~2mb, so you can upload at most 2.5gb before exhausting the limit.
+
+We cannot use bulk upload since it requires uploaded values be UTF-8 encoded strings, which isn't possible for binary data (base64 is impossible due to it taking up memory in the worker, where there is a 128mb limit).
