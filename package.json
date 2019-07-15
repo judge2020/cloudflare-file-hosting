@@ -7,7 +7,8 @@
         "cfupload": "./dist/cli.js"
     },
     "scripts": {
-        "test": "npm run buildcli && node ./dist/cli.js --path test",
+        "testcli": "npm run buildcli && node ./dist/cli.js --path test",
+        "testworker": "npm run buildworker && node ./dist/cli.js --path test",
         "buildcli": "webpack --config cli.webpack.config.js",
         "dist": "cross-env NODE_ENV=production npm run buildworker && cross-env NODE_ENV=production npm run buildcli",
         "buildworker": "webpack --config worker.webpack.config.js",
@@ -25,15 +26,15 @@
     "author": "judge2020",
     "license": "MIT",
     "devDependencies": {
-        "@types/node": "^12.0.4",
+        "@types/node": "^12.6.2",
         "@udacity/types-service-worker-mock": "^1.0.0",
         "cloudflare-worker-mock": "^1.0.0",
         "cross-env": "^5.2.0",
-        "ts-loader": "^6.0.2",
+        "ts-loader": "^6.0.4",
         "types-cloudflare-worker": "^1.0.0",
-        "typescript": "^3.5.1",
-        "webpack": "^4.33.0",
-        "webpack-cli": "^3.3.2"
+        "typescript": "^3.5.3",
+        "webpack": "^4.35.3",
+        "webpack-cli": "^3.3.6"
     },
     "dependencies": {
         "arraybuffer-to-string": "^1.0.2",

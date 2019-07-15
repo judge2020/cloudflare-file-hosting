@@ -1,0 +1,47 @@
+export const error_404 = "404 error: file not found";
+// leading slash will be removed during execution
+export const default_index = "/index.html";
+export const default_ct = "text/plain";
+
+// non-exhaustive. Add more to your own deployment if you use other extensions.
+export const extensionToContentType = {
+    'css': 'text/css',
+    'html': 'text/html',
+    'js': 'application/javascript',
+    'json': 'application/json',
+    'acc': 'audio/acc',
+    'avi': 'video/x-msvideo',
+    'bin': 'application/octet-stream',
+    'bmp': 'image/bmp',
+    'bz2': 'application/x-bzip2',
+    'bz': 'application/x-bzip',
+    'csv': 'text/csv',
+    'epub': 'application/epub+zip',
+    'gif': 'image/gif',
+    'htm': 'text/html',
+    'ico': 'image/vnd.microsoft.icon',
+    'jar': 'application/java-archive',
+    'jpeg': 'image/jpeg',
+    'jpg': 'image/jpeg',
+    'mp3': 'audio/mpeg',
+    'mp4': 'video/mp4',
+    'mpeg': 'video/mpeg',
+    'pdf': 'application/pdf',
+    'png': 'image/png',
+    'rar': 'application/x-rar-compressed',
+    'rtf': 'application/rtf',
+    'sh': 'application/x-sh',
+    'swf': 'application/x-shockwave-flash',
+    'tar': 'application/x-tar',
+    'tif': 'image/tiff',
+    'tiff': 'image/tiff',
+    'ttf': 'font/ttf',
+    'wav': 'audio/wav',
+    'webm': 'video/webm',
+    'webp': 'image/webp',
+    'woff': 'font/woff',
+    'woff2': 'font/woff2',
+    'xml': 'text/xml',
+    'zip': 'application/zip',
+    '7z': 'application/x-7z-compressed',
+};
