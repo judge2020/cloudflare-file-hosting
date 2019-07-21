@@ -8,6 +8,10 @@ let cache: CloudflareDefaultCacheStorage = caches.default;
 
 export class Worker {
     public async handle(event: FetchEvent) {
+        let _cache = await cache.match(event.request);
+        if (_cache) {
+            return _cache;
+        }
         let reqpath = new URL(event.request.url).pathname.replace('%20', ' ');
         if (reqpath === '/') {
             // Index will by default go to '/index.html' (can be changed in ./constants.ts
@@ -33,12 +37,14 @@ export class Worker {
         let _asStr = abs2str(value);
         if (!_asStr.startsWith('SPLIT_')) {
             // file is not split, return <2mb arrayBuffer
-            return new Response(value, {
+            let resp = new Response(value, {
                 headers: {
                     'content-type': contenttype,
                     'Accept-Ranges': 'none',
                 },
             });
+            await cache.put(event.request, resp.clone());
+            return resp;
         }
 
         // file stitching logic

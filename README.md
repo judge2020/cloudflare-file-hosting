@@ -31,18 +31,20 @@ Not all Cloudflare regions are optimal for large file downloads. A download from
 
 
 
-#### Upload/frequency limits
+#### Upload size and frequency limits
 
 Your uploading may get rate limited by Cloudflare if you have a lot of data to upload and/or are frequently uploading files. 
 
 The Cloudflare API request limit is 5000/hour. Each file upload is 1 request and big files that are being split will incur a request per every ~2mb, so you can upload at most 2.5gb before exhausting the limit.
 
-We cannot use bulk upload since it requires uploaded values be UTF-8 encoded strings, which isn't possible for binary data (base64 is impossible due to it taking up memory in the worker, where there is a 128mb limit).
+We cannot use bulk upload since it requires uploaded values be UTF-8 encoded strings, which isn't possible for binary data (base64 is not used due to it taking up memory in the worker, where there is a 128mb limit).
 
 #### Cache
 
-As far as I know, due to the fact that this uses streamed responses, we can't use the Cache API to prevent incurring charges for KV reads. This is a tradeoff to support files larger than 128mb. 
 
-In the future, it may be useful to implement cache use different file split logic (the logic from release 0.0.4) if it sees that it the worker likely won't use too much meory (128mb memory limit inside the worker). The file size will likely need to stay under 60mb since  the cache API warrants `response.clone()`, effectively doubling the amount of memory the worker is using.
+At the moment, responses under 2mb in size will be pulled from the Cloudflare cache if possible. 
+As far as I know, due to the fact that this uses streamed responses for >2mb files, we can't use the Cache API to prevent incurring charges for KV reads. This is a tradeoff to support files larger than 128mb. 
+
+In the future, it may be useful to implement cache use different file split logic (the logic from release 0.0.4) if it sees that it the worker likely won't use too much memory (128mb memory limit inside the worker). The file size will likely need to stay under 60mb since the cache API warrants `response.clone()`, effectively doubling the amount of memory the worker is using.
 
 [note: may be able to use the full ~120mb (reserve some for the worker's own memory usage) if `event.waitUntil()` can use the cache API and has its own memory quota.]
