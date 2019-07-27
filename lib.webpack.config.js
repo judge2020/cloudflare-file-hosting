@@ -7,8 +7,9 @@ module.exports = {
     module: {
         rules: [
             {
-                use: 'ts-loader',
+                loader: 'ts-loader',
                 exclude: [/node_modules/, /cli/, /worker/],
+                options: { configFile: 'lib.tsconfig.json' },
             },
         ],
     },
