@@ -16,7 +16,9 @@ workflow "push" {
 
 workflow "release" {
   on = "release"
-  resolves = ["publish"]
+  resolves = [
+    "publish"
+  ]
 }
 
 action "release-filter published" {
@@ -24,10 +26,14 @@ action "release-filter published" {
   args = "action published"
 }
 
-
 action "publish" {
   args = "publish --access public"
-  needs = ["build", "release-filter published"]
+  needs = ["fix-shebang", "release-filter published"]
   uses = "actions/npm@master"
   secrets = ["NPM_AUTH_TOKEN"]
+}
+
+action "fix-shebang" {
+  uses = "./.github/docker/fix-shebang"
+  needs = ["build"]
 }
