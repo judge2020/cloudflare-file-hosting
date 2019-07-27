@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     devtool: 'hidden-source-map',
     target: 'node',
-    entry: './lib/cli.ts',
+    entry: './cli/cli.ts',
     mode: process.env.NODE_ENV || 'development',
     module: {
         rules: [

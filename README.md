@@ -23,6 +23,22 @@ The $5/mo workers charge gets you **10 million free KV reads**. You will exhaust
 
 (estimates)
 
+### Usage
+
+#### Standalone
+
+Standalone usage is for dedicating a subdomain to serving files.
+
+Instructions TBD
+
+#### Existing worker
+
+the "get file response" method is provided as a library in order to make integrating this into existing workers projects simple.
+
+The API is similar to that of the `caches.default` API where you call the function, then check if the return value is `null`, in which case you continue with other code, or a `Response`, in which case you would immediately return that response. 
+
+The standalone worker is a direct example of using this API, see [workerCode.ts](worker/workerCode.ts).
+
 ### Limitations
 
 #### Download speeds

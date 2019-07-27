@@ -36,8 +36,7 @@ export function splitBuffer(buf: Buffer, num) {
     for (let i = 0; i < buf.length; i += num) {
         if (i + num > buf.length) {
             result.push(buf.slice(i, buf.length));
-        }
-        else {
+        } else {
             result.push(buf.slice(i, i + num));
         }
     }

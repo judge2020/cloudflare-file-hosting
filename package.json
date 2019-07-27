@@ -10,7 +10,8 @@
         "testcli": "npm run buildcli && node ./dist/cli.js --path test",
         "testworker": "npm run buildworker && node ./dist/cli.js --path test",
         "buildcli": "webpack --config cli.webpack.config.js",
-        "dist": "cross-env NODE_ENV=production npm run buildworker && cross-env NODE_ENV=production npm run buildcli",
+        "buildlib": "webpack --config lib.webpack.config.js",
+        "dist": "cross-env NODE_ENV=production npm run buildworker && cross-env NODE_ENV=production npm run buildcli && cross-env NODE_ENV=production npm run buildlib",
         "buildworker": "webpack --config worker.webpack.config.js",
         "watchworker": "webpack --config worker.webpack.config.js --watch"
     },

@@ -8,7 +8,7 @@ module.exports = {
         rules: [
             {
                 use: 'ts-loader',
-                exclude: [/node_modules/, /lib/],
+                exclude: [/node_modules/, /cli/],
             }
         ]
     },

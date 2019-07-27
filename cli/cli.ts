@@ -1,6 +1,6 @@
 import commander from "commander";
 import {promises as fs} from "fs";
-import * as helpers from "./helpers";
+import * as helpers from "./clihelpers";
 import walk from "walkdir";
 
 const {CLOUDFLARE_AUTH_KEY, CLOUDFLARE_AUTH_EMAIL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_KV_NAMESPACE_ID} = process.env;
