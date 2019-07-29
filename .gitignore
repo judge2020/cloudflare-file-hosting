@@ -11,4 +11,5 @@ test/
 lib/*.js
 dist/
 worker/*.js
+.vs/
 
