@@ -17,7 +17,8 @@ workflow "push" {
 workflow "release" {
   on = "release"
   resolves = [
-    "publish"
+    "publish",
+    "release-upload-artifacts",
   ]
 }
 
@@ -36,4 +37,11 @@ action "publish" {
 action "fix-shebang" {
   uses = "./.github/docker/fix-shebang"
   needs = ["build"]
+}
+
+action "release-upload-artifacts" {
+  uses = "judge2020/github-action-publish-binaries@master"
+  needs = ["fix-shebang"]
+  args = "dist/*"
+  secrets = ["GITHUB_TOKEN"]
 }
