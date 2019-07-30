@@ -1,11 +1,12 @@
 {
     "name": "cloudflare-file-hosting",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Use Cloudflare as a file host with Workers and Workers KV",
     "main": "./dist/lib/fileCore.js",
     "bin": {
         "cfupload": "./dist/cli/cli.js"
     },
+    "types": "./lib/fileCore.ts",
     "scripts": {
         "testcli": "npm run buildcli && node ./dist/cli/cli.js --path test",
         "buildcli": "tsc",
