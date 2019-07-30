@@ -30,19 +30,14 @@ action "release-filter published" {
 
 action "publish" {
   args = "publish --access public"
-  needs = ["fix-shebang"]
+  needs = ["build"]
   uses = "actions/npm@master"
   secrets = ["NPM_AUTH_TOKEN"]
 }
 
-action "fix-shebang" {
-  uses = "./.github/docker/fix-shebang"
-  needs = ["build"]
-}
-
 action "release-upload-artifacts" {
   uses = "judge2020/github-action-publish-binaries@master"
-  needs = ["fix-shebang"]
+  needs = ["build"]
   args = "dist/**/*"
   secrets = ["GITHUB_TOKEN"]
 }
