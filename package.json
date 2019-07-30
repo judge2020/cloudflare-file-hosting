@@ -30,6 +30,7 @@
         "@types/node": "^12.6.2",
         "@udacity/types-service-worker-mock": "^1.0.0",
         "cloudflare-worker-mock": "^1.0.0",
+        "cross-dotenv": "^1.0.4",
         "cross-env": "^5.2.0",
         "ts-loader": "^6.0.4",
         "types-cloudflare-worker": "^1.0.0",

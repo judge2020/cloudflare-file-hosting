@@ -27,9 +27,7 @@ The $5/mo workers charge gets you **10 million free KV reads**. You will exhaust
 
 #### Standalone
 
-Standalone usage is for dedicating a subdomain to serving files.
-
-Instructions TBD
+See [the wiki](https://github.com/judge2020/cloudflare-file-hosting/wiki/Standalone-usage).
 
 #### Existing worker
 
@@ -37,15 +35,49 @@ the "get file response" method is provided as a library in order to make integra
 
 The API is similar to that of the `caches.default` API where you call the function, then check if the return value is `null`, in which case you continue with other code, or a `Response`, in which case you would immediately return that response. 
 
+Use it:
+
+ `npm install cloudflare-file-hosting`
+
+```js
+// ES2015 Modules / typescript
+import CF_FILES from "cloudflare-file-hosting";
+
+// require / javascript
+let CF_FILES = require("cloudflare-file-hosting");
+
+async function handleRequest(request) {
+  // FILES_KV is a KV namespace dedicated to the static files
+  let url = new URL(request.url)
+  let _filesResponse = await CF_FILES.getFile(url.pathname, FILES_KV);
+  if (_filesResponse) {
+    return _filesResponse;
+  }
+  /* other code here for when the file wasn't found */
+}
+```
+
 The standalone worker is a direct example of using this API, see [workerCode.ts](worker/workerCode.ts).
+
+##### Uploading files
+
+To upload files, the following environment variables must be set:
+
+* CLOUDFLARE_AUTH_EMAIL - email of your account
+* CLOUDFLARE_AUTH_KEY - **global** API key
+* CLOUDFLARE_ACCOUNT_ID
+* CLOUDFLARE_ZONE_ID
+* CLOUDFLARE_KV_NAMESPACE_ID - the KV namespace ID for where to upload files
+
+With these set, run `cfupload --path path/to/root`. You might need to use `node_modules/.bin/cfupload --path path/to/root` instead depending on your PATH setup.
 
 ### Limitations
 
 #### Download speeds
 
-Not all Cloudflare regions are optimal for large file downloads. A download from the ATL datacenter with a fiber connection within the same state (Georgia) obtained ~6 MB/s download speeds. 
+Not all Cloudflare regions are optimal for large file downloads. A download from the ATL datacenter with a fiber connection within the same state (Georgia) obtained ~6 MB/s download speeds.
 
-
+Argo smart routing likely won't have any effect due to the nature of Workers (Argo only routes CF <--> origin better).
 
 #### Upload size and frequency limits
 
