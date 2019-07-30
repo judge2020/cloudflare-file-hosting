@@ -19,6 +19,7 @@ workflow "release" {
   resolves = [
     "publish",
     "release-upload-artifacts",
+    "release-filter published",
   ]
 }
 
@@ -29,7 +30,7 @@ action "release-filter published" {
 
 action "publish" {
   args = "publish --access public"
-  needs = ["fix-shebang", "release-filter published"]
+  needs = ["fix-shebang"]
   uses = "actions/npm@master"
   secrets = ["NPM_AUTH_TOKEN"]
 }
@@ -42,6 +43,6 @@ action "fix-shebang" {
 action "release-upload-artifacts" {
   uses = "judge2020/github-action-publish-binaries@master"
   needs = ["fix-shebang"]
-  args = "dist/*"
+  args = "dist/**/*"
   secrets = ["GITHUB_TOKEN"]
 }
