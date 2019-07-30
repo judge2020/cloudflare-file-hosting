@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import commander from "commander";
 import {promises as fs} from "fs";
 import * as helpers from "./clihelpers";
