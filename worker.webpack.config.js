@@ -5,6 +5,9 @@ module.exports = {
     entry: './worker/workerCode.ts',
     target: 'webworker',
     mode: process.env.NODE_ENV || 'development',
+    optimization: {
+        minimize: false,
+    },
     module: {
         rules: [
             {
@@ -19,6 +22,6 @@ module.exports = {
     },
     output: {
         filename: 'worker.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
     }
 };
