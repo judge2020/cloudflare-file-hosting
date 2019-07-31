@@ -1,5 +1,5 @@
 import * as path from "path";
-
+import slash from "slash";
 import Axios from "axios";
 import * as fssync from "fs";
 
@@ -14,8 +14,7 @@ export function relativePath(fullPath) {
 }
 
 export function fileToUri(filePath: string, path: string): string {
-    let uriPath = filePath.replace('\\', '/')
-        .replace(path, '');
+    let uriPath = slash(filePath).replace(path, '');
     if (!uriPath.startsWith('/')) {
         uriPath = `/${uriPath}`;
     }
