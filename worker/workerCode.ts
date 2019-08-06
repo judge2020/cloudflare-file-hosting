@@ -12,6 +12,12 @@ export class Worker {
         if (path == '/') {
             path = '/index.html'
         }
+
+        if (path == '/upload') {
+            let a = await fileCore.putFile("/test1.png", STATIC_KV, event.request);
+            return a;
+        }
+
         //
         // call the cache api-like API for fileCore
         // Param 1: file name/path

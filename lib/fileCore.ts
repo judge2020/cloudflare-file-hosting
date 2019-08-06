@@ -12,6 +12,49 @@ export default class FileCore {
         return ct[fileExtension] || defaultType;
     }
 
+    public static async putFile(filePath: string, KV_NAMESPACE: CloudflareWorkerKV, request: Request): Promise<Response> {
+        if (filePath.startsWith("/")) {
+            filePath = filePath.substr(1);
+        }
+        let b = await request.blob();
+        // @ts-ignore
+        await KV_NAMESPACE.put(`${filePath}`, b);
+        return new Response("success");
+        let {readable, writable} = new TransformStream();
+        this.streamPutKv(writable, KV_NAMESPACE, filePath, request);
+        return new Response(readable);
+    }
+
+    /**
+     *
+     * @param writableDummy a writable from a transformstream; we use this to trick the runtime into allowing us to upload files larger than 128mb
+     * @param KV_NAMESPACE the KV namespace to PUT this to
+     * @param path path to the file after upload, including extension
+     * @param request incoming request with the body being the raw file
+     */
+    public static async streamPutKv(writableDummy: WritableStream, KV_NAMESPACE: CloudflareWorkerKV, path, request: Request) {
+        let writer = writableDummy.getWriter();
+
+        let blob = await request.blob();
+
+        let splitNum = 2097152;
+        if (blob.size < splitNum) {
+            // @ts-ignore
+            await KV_NAMESPACE.put(`${path}`, blob.slice(0, splitNum));
+        }
+        for (let i = 0; i < blob.size; i += splitNum) {
+            let slice;
+            if (i + splitNum > blob.size) {
+                slice = blob.slice(i, blob.size)
+            } else {
+                slice = blob.slice(i, i + splitNum)
+            }
+            await KV_NAMESPACE.put(`${path}_${i}`, slice);
+        }
+        await writer.write(new TextEncoder().encode('Success'));
+        await writer.close()
+    }
+
     /**
      * Check if a file exists in the specified KV namespace. If so, return a response for that file
      * @param filePath Path to the file, eg `new URL(event.request.url).pathname`
