@@ -1,0 +1,15 @@
+on: push
+name: push
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: npm-install
+      uses: actions/npm@master
+      with:
+        args: ci
+    - name: build
+      uses: actions/npm@master
+      with:
+        args: run dist

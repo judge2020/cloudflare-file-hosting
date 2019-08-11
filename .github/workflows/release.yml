@@ -1,0 +1,31 @@
+on: release
+name: release
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: npm-install
+      uses: actions/npm@master
+      with:
+        args: ci
+    - name: build
+      uses: actions/npm@master
+      with:
+        args: run dist
+    - name: release-filter published
+      uses: actions/bin/filter@master
+      with:
+        args: action published
+    - name: release-upload-artifacts
+      uses: judge2020/github-action-publish-binaries@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: dist/**/*
+    - name: publish
+      uses: actions/npm@master
+      env:
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      with:
+        args: publish --access public
