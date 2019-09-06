@@ -13,7 +13,7 @@ module.exports = {
             {
                 loader: 'ts-loader',
                 exclude: [/node_modules/, /cli/],
-                options: { configFile: 'worker.tsconfig.json' },
+                options: { configFile: 'worker/tsconfig.json' },
             }
         ]
     },
