@@ -45,12 +45,18 @@ export default class FileCore {
         }
 
         // prep custom headers
-        customHeaders["content-type"] = this.getContentType(filePath);
         customHeaders["accept-ranges"] = "none";
 
         // we use an arrayBuffer so that, if the file is <2mb, we can instantly return it
         let _asStr = ArrayBufferToString(arrayBufferValue);
         if (!_asStr.startsWith('SPLIT_')) {
+            let magicBytes: string[] = [];
+            (new Uint8Array(arrayBufferValue.slice(0, 4))).forEach(byte => {
+                magicBytes.push(byte.toString(16))
+            })
+            // here we get content type from the bytes, unless it's not one of the defined types
+            // Since we can't trust different plain text files of the same extension to have the same magic numbers
+            customHeaders["content-type"] = this.getContentTypeFromBytes(magicBytes.join('').toUpperCase(), null) || this.getContentType(filePath);
             let resp = new Response(arrayBufferValue, {
                 headers: customHeaders
             });
@@ -61,6 +67,9 @@ export default class FileCore {
         }
 
         // file stitching logic
+
+        // can't process first 4 bytes of a stream yet
+        customHeaders["content-type"] = this.getContentType(filePath);
 
         let {readable, writable} = new TransformStream();
 
@@ -75,6 +84,27 @@ export default class FileCore {
         return new Response(readable, {
             headers: customHeaders
         })
+    }
+
+    public static getContentTypeFromBytes(signature, defaultType: string | null = "text/plain") {
+        // Since plain text files will have different signatures
+        // only place binary files magic numbers here
+        switch (signature) {
+            case '89504E47':
+                return 'image/png'
+            case '47494638':
+                return 'image/gif'
+            case '25504446':
+                return 'application/pdf'
+            case 'FFD8FFDB':
+            case 'FFD8FFE0':
+            case 'FFD8FFE1':
+                return 'image/jpeg'
+            case '504B0304':
+                return 'application/zip'
+            default:
+                return defaultType
+        }
     }
 
     public static async streamKv(numberOfKeys, writable: WritableStream, KV_NAMESPACE: CloudflareWorkerKV, reqpath) {
