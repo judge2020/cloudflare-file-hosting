@@ -1,31 +1,38 @@
 on: release
 name: release
 jobs:
-  npm-install:
+  release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: npm-install
-      uses: actions/npm@master
-      with:
-        args: ci
-    - name: build
-      uses: actions/npm@master
-      with:
-        args: run dist
-    - name: release-filter published
-      uses: actions/bin/filter@master
-      with:
-        args: action published
-    - name: release-upload-artifacts
-      uses: judge2020/github-action-publish-binaries@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: dist/**/*
-    - name: publish
-      uses: actions/npm@master
-      env:
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      with:
-        args: publish --access public
+      - uses: actions/checkout@master
+        if: github.event.action == 'published'
+      - uses: actions/setup-node@v1
+        name: Setup node (npmjs.org)
+        if: github.event.action == 'published'
+        with:
+          node-version: '12.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+        if: github.event.action == 'published'
+      - run: npm run dist
+        if: github.event.action == 'published'
+      - uses: actions/upload-artifact@master
+        if: github.event.action == 'published'
+        with:
+          name: dist
+          path: dist
+      - run: npm publish --access public
+        if: github.event.action == 'published'
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        with:
+          args: publish --access public
+      - uses: actions/setup-node@v1
+        name: Setup node (npm.pkg.github.com)
+        if: github.event.action == 'published'
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm publish
+        if: github.event.action == 'published'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
