@@ -1,15 +1,17 @@
 on: push
 name: push
 jobs:
-  npm-install:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: npm-install
-      uses: actions/npm@master
-      with:
-        args: ci
-    - name: build
-      uses: actions/npm@master
-      with:
-        args: run dist
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm ci
+      - run: npm run dist
+      - uses: actions/upload-artifact@master
+        if: github.event.action == 'published'
+        with:
+          name: dist
+          path: dist
