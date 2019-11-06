@@ -16,7 +16,7 @@ export default class FileCore {
      * Check if a file exists in the specified KV namespace. If so, return a response for that file
      * @param filePath Path to the file, eg `new URL(event.request.url).pathname`
      * @param KV_NAMESPACE a KV namespace binding for your files
-     * @param useCache Whether or not to use the cache API. Will only cache files less than 2mb in size.
+     * @param useCache Whether or not to use the cache API. Will only cache files less than 10mb in size.
      * @param requestForCache If you set useCache to true, this is the event.request object to use for cache matching.
      * @param customHeaders any custom headers
      * @return {Response} Response when a file is found; immediately return this if it's found or streamed responses will not work
@@ -48,7 +48,7 @@ export default class FileCore {
         customHeaders["content-type"] = this.getContentType(filePath);
         customHeaders["accept-ranges"] = "none";
 
-        // we use an arrayBuffer so that, if the file is <2mb, we can instantly return it
+        // we use an arrayBuffer so that, if the file is <10mb, we can instantly return it
         let _asStr = ArrayBufferToString(arrayBufferValue);
         if (!_asStr.startsWith('SPLIT_')) {
             let resp = new Response(arrayBufferValue, {

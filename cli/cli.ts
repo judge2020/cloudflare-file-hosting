@@ -4,20 +4,20 @@ import {promises as fs} from "fs";
 import * as helpers from "./clihelpers";
 import walk from "walkdir";
 
-const {CLOUDFLARE_AUTH_KEY, CLOUDFLARE_AUTH_EMAIL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_KV_NAMESPACE_ID} = process.env;
+const {CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_KV_NAMESPACE_ID} = process.env;
 
 // begin CLI
 const program = new commander.Command();
-program.version('0.0.1')
-    .description('Upload files to Cloudflare using Workers and Workers KV')
+program.version('0.2.0')
+    .description('Upload large files to Cloudflare using Workers and Workers KV')
     .option('-p, --path <path>', 'Path to root directory of hostname (eg. \"--path dist\" will mean dist/test.css is available at (hostname)/test.css)');
 
 program.parse(process.argv);
 
 // ensure Cloudflare environment variables are passed
 
-if (!(CLOUDFLARE_AUTH_EMAIL && CLOUDFLARE_AUTH_KEY)) {
-    console.log('The Environment variables CLOUDFLARE_AUTH_EMAIL and CLOUDFLARE_AUTH_KEY need to be set.');
+if (!CLOUDFLARE_API_TOKEN) {
+    console.log('The Environment variable CLOUDFLARE_API_TOKEN need to be set.');
     process.exit(1)
 }
 
@@ -52,15 +52,15 @@ walk(path, {}, async (_filePath, stat) => {
     let uriPath = helpers.fileToUri(filePath, path);
 
     let b64Contents = await fs.readFile(filePath, {encoding: null});
-    // handle small files
-    if (b64Contents.length < 2097152) {
+    // handle <10mb files
+    if (b64Contents.length < 10485760) {
         console.log(`Uploading ${uriPath}...`);
         await uploadFile(uriPath, b64Contents);
         return;
     }
 
-    // file splitting logic for >2mb files
-    let b64parts = helpers.splitBuffer(b64Contents, 2097152);
+    // file splitting logic for >10mb files
+    let b64parts = helpers.splitBuffer(b64Contents, 10485760);
 
     await uploadFile(uriPath, `SPLIT_${b64parts.length}`);
 

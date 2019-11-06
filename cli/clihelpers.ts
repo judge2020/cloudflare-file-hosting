@@ -3,7 +3,7 @@ import slash from "slash";
 import Axios from "axios";
 import * as fssync from "fs";
 
-const {CLOUDFLARE_AUTH_KEY, CLOUDFLARE_AUTH_EMAIL} = process.env;
+const {CLOUDFLARE_API_TOKEN} = process.env;
 
 export function isDirectory(dirPath) {
     return fssync.statSync(dirPath).isDirectory();
@@ -47,8 +47,7 @@ export async function cfApiCall({url, method, contentType = '', body = null}) {
     return await Axios({
         method: method,
         headers: {
-            'X-Auth-Email': CLOUDFLARE_AUTH_EMAIL,
-            'X-Auth-Key': CLOUDFLARE_AUTH_KEY,
+            'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
             'content-type': contentType
         },
         data: body,

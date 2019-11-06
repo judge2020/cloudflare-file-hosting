@@ -23,7 +23,7 @@ export class Worker {
         // the custom headers (param 5) is not included in the sample
         //
         let _filecore = await fileCore.getFile(path, STATIC_KV, true, event.request);
-        // Due to the streaming nature if the file is over 2mb,
+        // Due to the streaming nature if the file is over 10mb,
         // be wary before trying to create your own response from this returned response
         if (_filecore) {
             return _filecore;
