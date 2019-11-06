@@ -3,34 +3,26 @@ name: release
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.event.action == 'published'
     steps:
       - uses: actions/checkout@master
-        if: github.event.action == 'published'
       - uses: actions/setup-node@v1
         name: Setup node (npmjs.org)
-        if: github.event.action == 'published'
         with:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-        if: github.event.action == 'published'
       - run: npm run dist
-        if: github.event.action == 'published'
-      - uses: actions/upload-artifact@master
-        if: github.event.action == 'published'
-        with:
-          name: dist
-          path: dist
       - run: npm publish --access public
-        if: github.event.action == 'published'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - uses: actions/setup-node@v1
-        name: Setup node (npm.pkg.github.com)
-        if: github.event.action == 'published'
         with:
           registry-url: 'https://npm.pkg.github.com'
       - run: npm publish
-        if: github.event.action == 'published'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@master
+        with:
+          name: dist
+          path: dist
