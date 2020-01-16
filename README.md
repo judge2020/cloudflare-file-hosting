@@ -2,6 +2,10 @@
 
 Uses Workers KV to enable Cloudflare as a file host. MIT Licensed.
 
+### This vs. [Workers Sites](https://developers.cloudflare.com/workers/sites/)
+
+This tool is intended for when you need to host files that are above Cloudflare Workers' size limitations (currently 10mb); however,  this comes at a cost penalty. See the below pricing notice.
+
 ### Pricing notice
 
 You should know that **Cloudflare Workers always runs in front the CF Cache**. This means none of the files will be cached, and every request made to these files will count against your Workers quota and pricing ($0.50/million after 10 million).
