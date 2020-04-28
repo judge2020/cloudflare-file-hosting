@@ -6,11 +6,52 @@ declare var STATIC_KV: CloudflareWorkerKV;
 
 export class Worker {
     public async handle(event: FetchEvent) {
-
-        // First: use index.html for the root
+        if (event.request.method == "POST") {
+            let targetname = event.request.headers.get("x-filename");
+            let buf = await event.request.arrayBuffer();
+            try {
+                await STATIC_KV.put(targetname!, buf);
+            } catch (e) {
+                return new Response(e.message);
+            }
+            return new Response("success");
+        }
         let path = new URL(event.request.url).pathname;
-        if (path == '/') {
-            path = '/index.html'
+        if (path == '/upload') {
+            const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Test upload</title>
+  </head>
+  <body>
+      <input type="file" id="file" />
+      <br>
+      <label for="filename">File name</label>
+      <input type="text" id="filename"/>
+      <br>
+      <button id="submit">do</button>
+    <script>
+    document.getElementById("submit").addEventListener('click', async () => {
+        let filename = document.getElementById('filename').value;
+        if (!filename) {
+            alert("please enter a filename");
+            return;
+        }
+        fetch('/upload', {
+            method: 'POST',
+            headers: {'x-filename': filename},
+            body: document.getElementById("file").files[0]
+        }).then((/** @type {Response} */ result) => {
+            alert(result.body.text());
+        })
+    })
+    </script>
+  </body>
+</html>
+`
+            return new Response(html, {headers: {'content-type': 'text/html'}})
         }
         //
         // call the cache api-like API for fileCore
