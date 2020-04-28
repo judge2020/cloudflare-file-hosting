@@ -32,7 +32,11 @@ export class Worker {
       <input type="text" id="filename"/>
       <br>
       <button id="submit">do</button>
+      <a id="out"></a>
     <script>
+    document.getElementById("file").addEventListener("change", async () => {
+        document.getElementById('filename').value = document.getElementById("file").files[0].name;
+    });
     document.getElementById("submit").addEventListener('click', async () => {
         let filename = document.getElementById('filename').value;
         if (!filename) {
@@ -43,9 +47,12 @@ export class Worker {
             method: 'POST',
             headers: {'x-filename': filename},
             body: document.getElementById("file").files[0]
-        }).then((/** @type {Response} */ result) => {
-            alert(result.body.text());
-        })
+        }).then(async (/** @type {Response} */ result) => {
+            out = await result.text();
+            alert(out);
+            document.getElementById("out").innerHTML = filename;
+            document.getElementById("out").href = "/" + filename;
+        });
     })
     </script>
   </body>
