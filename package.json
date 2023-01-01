@@ -32,11 +32,11 @@
         "cloudflare-worker-mock": "^1.0.0",
         "cross-dotenv": "^1.0.4",
         "cross-env": "^5.2.0",
-        "ts-loader": "^6.0.4",
+        "ts-loader": "^9.4.2",
         "types-cloudflare-worker": "^1.0.0",
         "typescript": "^3.5.3",
-        "webpack": "^4.35.3",
-        "webpack-cli": "^3.3.6"
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.1"
     },
     "dependencies": {
         "arraybuffer-to-string": "^1.0.2",
